@@ -30,7 +30,7 @@ def create_app(test_config=None):
         app.config.from_pyfile('config.py', silent=True)
     else:
         app.config.from_mapping(test_config)
-    
+
     try:
         os.makedirs(app.instance_path)
     except OSError:
@@ -43,5 +43,8 @@ def create_app(test_config=None):
 
     from . import db
     db.init_app(app)
+
+    from . import auth
+    app.register_blueprint(auth.bp)
 
     return app
