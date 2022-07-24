@@ -81,6 +81,7 @@ def get_post(id, check_author=True):
 
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@login_required
 def update(id):
     post = get_post(id)
 
@@ -108,6 +109,7 @@ def update(id):
 
 
 @bp.route('/<int:id>/delete', methods=('GET', 'POST'))
+@login_required
 def delete(id):
     post = get_post(id)
     db = get_db()
@@ -127,20 +129,3 @@ def load_logged_in_user():
         g.user = get_db().execute(
             "SELECT * FROM user WHERE id = ?", (user_id,)
         ).fetchone()
-
-
-@bp.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('index'))
-
-
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for('index'))
-
-        return view(**kwargs)
-
-    return wrapped_view
